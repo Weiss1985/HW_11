@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -13,23 +14,24 @@ class Field:
     def value(self, new_value):
         self.value = new_value
 
-    def is_valid(self, value):
-        pass
-
     def __str__(self):
         return str(self.value)
+
 
 class Name(Field):
     pass
 
-class Phone(Field):
-    def __init__(self, value):
-        super().__init__(value)
-        if not self.is_valid(value):
-            raise ValueError('Помилка, номер повинен складатися з 10 цифр.')
 
-    def is_valid(self, value):
-        return len(value) == 10 and self.value.isdigit()
+class Phone(Field):
+
+    @Field.value.setter
+    def value(self, value):
+        if len(value) == 10 and value.isdigit():
+            self.__value = value
+        else:
+            raise ValueError('Помилка, номер повинен складатися з 10 цифр.')
+        
+
 
 class Birthday(Field):
     def is_valid(self, value):
@@ -38,6 +40,7 @@ class Birthday(Field):
             datetime.strptime(value, '%d-%m-%Y')
         except ValueError:
             print('Недійсний формат дня народження. Спробуйте ДД-ММ-РРРР.')
+
 
 class Record:
     def __init__(self, name, birthday=None):
@@ -86,6 +89,7 @@ class Record:
 
         days_left = (next_birthday - today).days
         return days_left
+
 
 class AddressBook(UserDict):
     def add_record(self, record):
